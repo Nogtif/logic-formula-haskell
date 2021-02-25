@@ -27,6 +27,13 @@ instance Show (Formula a) where
     show (Imp f1 f2) = "(" ++ show f1 ++ " ⇒ " ++ show f2 ++ ")"
     show (Eqv f1 f2) = "(" ++ show f1 ++ " ⇔ " ++ show f2 ++ ")"
 
+
+constraint :: Formula a
+constraint = Or (And (Not (Var "p1")) (Var "t1")) (Or (Var "p2") (Not (Var "t2")))
+
+
+
+
 {- Type World, pour représenter le type des mondes possibles. -}
 type World = [[Char]]
 
