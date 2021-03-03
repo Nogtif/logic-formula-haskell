@@ -36,16 +36,14 @@ genAllWorlds :: [[Char]] -> [World]
 genAllWorlds [] = []
 genAllWorlds (x:xs) = [x] : map (x :) (genAllWorlds xs) ++ genAllWorlds xs
 
-isExist :: [Char] -> World -> Bool
-isExist _ [] = False
-isExist n (x:xs)
-    | n == x = True
-    | otherwise = isExist n xs
-
+{- Fonction qui, pour un monde possible w et une formule phi passés en arguments, vérifie si w satisfait phi. -}
 sat :: World -> Formula -> Bool
 sat _ T = True
-sat _ F = True
-sat w (Var a) 
-    | (isExist a w) = True 
-    | otherwise = False
+sat _ F = False
+sat w (Var s) = s `elem` w
+sat w (Not phi) = not (sat w phi)
+sat w (And phi psi) = (sat w phi) && (sat w psi)
+sat w (Or phi psi)  = (sat w phi) || (sat w psi)
+sat w (Imp phi psi) = not (sat w phi) || (sat w psi)
+sat w (Eqv phi psi) = (not (sat w phi) || (sat w psi)) && ((sat w phi) || (not (sat w psi)))
 
