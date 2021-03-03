@@ -1,5 +1,4 @@
 {-# OPTIONS_GHC -Wall #-}
-
 {----- 
     LCPF : Projet
     Une princesse ou un tigre ?
@@ -36,6 +35,13 @@ genAllWorlds :: [[Char]] -> [World]
 genAllWorlds [] = []
 genAllWorlds (x:xs) = [x] : map (x :) (genAllWorlds xs) ++ genAllWorlds xs
 
+testGenWorlds :: [Bool] -- Fonction de test
+testGenWorlds = [
+    genAllWorlds ["p1", "p2", "t1", "t2"] == [
+        ["p1"], ["p1", "p2"], ["p1","p2","t1"], ["p1","p2","t1","t2"],["p1","p2","t2"],
+        ["p1","t1"],["p1","t1","t2"],["p1","t2"], ["p2"],["p2","t1"], ["p2","t1","t2"],  ["p2","t2"], ["t1"], ["t1","t2"], ["t2"]] 
+    ]
+
 {- Fonction qui, pour un monde possible w et une formule phi passés en arguments, vérifie si w satisfait phi. -}
 sat :: World -> Formula -> Bool
 sat _ T = True
@@ -47,3 +53,24 @@ sat w (Or phi psi)  = (sat w phi) || (sat w psi)
 sat w (Imp phi psi) = not (sat w phi) || (sat w psi)
 sat w (Eqv phi psi) = (not (sat w phi) || (sat w psi)) && ((sat w phi) || (not (sat w psi)))
 
+testSat :: [Bool] -- Fonction de test
+testSat = [
+    sat ["p1", "t2"] T == True,
+    sat ["p1", "p2", "t2"] (And (Var "p1") (Var "p2")) == True,
+    sat ["p1", "p2"] (And (Var "p1") (Var "p2")) == True,
+    sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
+
+
+{- Fonction qui reçoit les résultats d’un test et qui retourne vrai si tous les résultats du test sont vrai et faux sinon. -}
+test :: [Bool] -> Bool
+test(tab)
+    | head tab == last tab && head tab == True = True
+    | head tab == False = False
+    | otherwise = test (tail tab)
+
+{- Fonction qui retourne la chaine de caractères "Success!" 
+si tous les résultats des tests de toutes les fonctions sont vrais, sinon "Fail!". -}
+testAll :: [Char]
+testAll 
+    | test(testGenWorlds) && test(testSat) = "Success"
+    | otherwise = "Fail!"
