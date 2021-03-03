@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wall #-}
+
 {----- 
     LCPF : Projet
     Une princesse ou un tigre ?
@@ -7,7 +8,7 @@
 
 module CPL where
 
--- Type structuré Formula pour représenter des formules booléennes (c.-à-d., des formules logiques).
+{- Type structuré Formula pour représenter des formules booléennes (c.-à-d., des formules logiques).-}
 data Formula = T | F | Var [Char]
     | Not   (Formula)
     | And   (Formula) (Formula)
@@ -26,27 +27,6 @@ instance Show Formula where
     show (Imp f1 f2) = "(" ++ show f1 ++ " ⇒ " ++ show f2 ++ ")"
     show (Eqv f1 f2) = "(" ++ show f1 ++ " ⇔ " ++ show f2 ++ ")"
 
-door1 :: Formula
-door1 = And (Var "p1") (Var "t2")
-
-door2 :: Formula
-door2 = Or (And (Var "p1") (Var "t2")) (And (Var "t1") (Var "p2"))
-
--- Formule qui décrit le fait qu’il ne peut pas y avoir un tigre et une princesse (en même temps) dans chaque cellule.
-constraint :: Formula
-constraint = And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))
-
--- Formule pour exprimer le fait que, dans la première épreuve au moins, l'une des portes dit la vérité et l'autre ment. --
-reglement :: Formula
-reglement = Or (And (Not door1) door2) (And door1 (Not door2))
-
-{- Fonction qui fait la conjonction de toutes les formules de la première épreuve. -}
-challenge1 :: Formula
-challenge1 = And (constraint) (reglement)
-
-
-
-
 {- Type World, pour représenter le type des mondes possibles. -}
 type World = [[Char]]
 
@@ -56,6 +36,10 @@ genAllWorlds :: [[Char]] -> [World]
 genAllWorlds [] = []
 genAllWorlds (x:xs) = [x] : map (x :) (genAllWorlds xs) ++ genAllWorlds xs
 
-{- Fonction qui, pour un monde possible w et une formule phi pass´es en arguments, v´erifie si w satisfait phi. -}
+
 sat :: World -> Formula -> Bool
-sat w phi = True
+sat w phi
+    | phi == T = True
+    | phi == F = False
+    | otherwise = True
+
