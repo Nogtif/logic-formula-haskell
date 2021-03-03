@@ -36,10 +36,16 @@ genAllWorlds :: [[Char]] -> [World]
 genAllWorlds [] = []
 genAllWorlds (x:xs) = [x] : map (x :) (genAllWorlds xs) ++ genAllWorlds xs
 
+isExist :: [Char] -> World -> Bool
+isExist _ [] = False
+isExist n (x:xs)
+    | n == x = True
+    | otherwise = isExist n xs
 
 sat :: World -> Formula -> Bool
-sat w phi
-    | phi == T = True
-    | phi == F = False
-    | otherwise = True
+sat _ T = True
+sat _ F = True
+sat w (Var a) 
+    | (isExist a w) = True 
+    | otherwise = False
 
