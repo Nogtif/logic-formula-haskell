@@ -63,11 +63,23 @@ testSat = [
     sat ["p1", "p2"] (And (Var "p1") (Var "p2")) == True,
     sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
 
+{- Fonction qui qui, pour une formule phi renvoie la liste de tous mondes possibles qui satisfont phi. -}
+extractVars :: Formula -> [[Char]] -- Extrait les variables possibles à partir d'une formule.
+extractVars (Var s) = [s]
+extractVars (Not phi) = (extractVars phi)
+extractVars (And phi psi) = (extractVars phi) ++ (extractVars psi)
+
 findWorlds :: [World] -> Formula -> [World]
 findWorlds [] _ = []
 findWorlds (x:xs) f
     | (sat x f) == True = [x] ++ findWorlds xs f
     | otherwise = (findWorlds xs f)
+
+{-
+testFindWorlds :: [Bool] -- Fonction de test
+testFindWorlds = [
+    findWorlds (And (Var "p1") (Var "t2")),
+    findWorlds (door1) == [["p1","t2"]] ]-}
 
 
 {- Fonction qui reçoit les résultats d’un test et qui retourne vrai si tous les résultats du test sont vrai et faux sinon. -}
