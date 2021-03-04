@@ -26,8 +26,10 @@ instance Show Formula where
     show (Imp f1 f2) = "(" ++ show f1 ++ " ⇒ " ++ show f2 ++ ")"
     show (Eqv f1 f2) = "(" ++ show f1 ++ " ⇔ " ++ show f2 ++ ")"
 
+
 {- Type World, pour représenter le type des mondes possibles. -}
 type World = [[Char]]
+
 
 {- Fonction qui, pour une liste de noms de variables propositionnels (tel que ["p1", "p2", "t1", "t2"]), 
 génère la liste de tous les mondes possibles pour ces variables. -}
@@ -42,6 +44,7 @@ testGenWorlds = [
         ["p1","t1"],["p1","t1","t2"],["p1","t2"], ["p2"],["p2","t1"], ["p2","t1","t2"],  ["p2","t2"], ["t1"], ["t1","t2"], ["t2"]] 
     ]
 
+
 {- Fonction qui, pour un monde possible w et une formule phi passés en arguments, vérifie si w satisfait phi. -}
 sat :: World -> Formula -> Bool
 sat _ T = True
@@ -50,8 +53,8 @@ sat w (Var s) = s `elem` w
 sat w (Not phi) = not (sat w phi)
 sat w (And phi psi) = (sat w phi) && (sat w psi)
 sat w (Or phi psi)  = (sat w phi) || (sat w psi)
-sat w (Imp phi psi) = not (sat w phi) || (sat w psi)
-sat w (Eqv phi psi) = (not (sat w phi) || (sat w psi)) && ((sat w phi) || (not (sat w psi)))
+sat w (Imp phi psi) = (not (sat w phi)) || (sat w psi)
+sat w (Eqv phi psi) = (sat w (Imp phi psi)) && (sat w (Imp psi phi))
 
 testSat :: [Bool] -- Fonction de test
 testSat = [
@@ -59,6 +62,12 @@ testSat = [
     sat ["p1", "p2", "t2"] (And (Var "p1") (Var "p2")) == True,
     sat ["p1", "p2"] (And (Var "p1") (Var "p2")) == True,
     sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
+
+findWorlds :: [World] -> Formula -> [World]
+findWorlds [] _ = []
+findWorlds (x:xs) f
+    | (sat x f) == True = [x] ++ findWorlds xs f
+    | otherwise = (findWorlds xs f)
 
 
 {- Fonction qui reçoit les résultats d’un test et qui retourne vrai si tous les résultats du test sont vrai et faux sinon. -}

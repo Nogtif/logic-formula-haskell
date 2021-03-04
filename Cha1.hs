@@ -1,3 +1,9 @@
+{-# OPTIONS_GHC -Wall #-}
+{----- 
+    LCPF : Projet
+    Une princesse ou un tigre ?
+    by Quentin Carpentier & Paul-Joseph Krogulec.
+-----}
 
 import CPL
 
