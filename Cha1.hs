@@ -8,9 +8,11 @@
 module Cha1 (challenge1) where
 import CPL
 
+{- Porte 1 disant : Il y a une princesse dans cette cellule et un tigre dans l’autre. -}
 door1 :: Formula
 door1 = And (Var "p1") (Var "t2")
 
+{- Porte 2 disant : Il y a une princesse dans une cellule et il y a un tigre dans une cellule. -}
 door2 :: Formula
 door2 = Or (And (Var "p1") (Var "t2")) (And (Var "t1") (Var "p2"))
 

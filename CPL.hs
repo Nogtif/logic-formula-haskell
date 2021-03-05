@@ -5,7 +5,14 @@
     by Quentin Carpentier & Paul-Joseph Krogulec.
 -----}
 
-module CPL where
+module CPL (
+    Formula (..),
+    World,
+    genAllWorlds, testGenWorlds,
+    sat, testSat,
+    findWorlds, testFindWorlds,
+    testAll
+) where
  
 {- Type structuré Formula pour représenter des formules booléennes (c.-à-d., des formules logiques).-}
 data Formula = T | F | Var [Char]
@@ -41,7 +48,7 @@ testGenWorlds :: [Bool] -- Fonction de test
 testGenWorlds = [
     genAllWorlds ["p1", "p2", "t1", "t2"] == [
         ["p1"], ["p1", "p2"], ["p1","p2","t1"], ["p1","p2","t1","t2"],["p1","p2","t2"],
-        ["p1","t1"],["p1","t1","t2"],["p1","t2"], ["p2"],["p2","t1"], ["p2","t1","t2"],  ["p2","t2"], ["t1"], ["t1","t2"], ["t2"]] 
+        ["p1","t1"],["p1","t1","t2"],["p1","t2"], ["p2"],["p2","t1"], ["p2","t1","t2"], ["p2","t2"], ["t1"], ["t1","t2"], ["t2"]] 
     ]
 
 
@@ -64,25 +71,34 @@ testSat = [
     sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
 
 {- Fonction qui qui, pour une formule phi renvoie la liste de tous mondes possibles qui satisfont phi. -}
-extractVars :: Formula -> [[Char]]
-extractVars (Var s) = [s]
-extractVars (Not phi) = (extractVars phi)
-extractVars (And phi psi) = (extractVars phi) ++ (extractVars psi)
-extractVars (Or phi psi) = (extractVars phi) ++ (extractVars psi)
-extractVars (Imp phi psi) = (extractVars phi) ++ (extractVars psi)
-extractVars (Eqv phi psi) = (extractVars phi) ++ (extractVars psi)
+extractVars :: Formula -> World
+extractVars T = []
+extractVars F = []
+extractVars (Var v) = [v]
+extractVars (Not f) = extractVars f
+extractVars (And f1 f2) = extractVars f1 ++ extractVars f2
+extractVars (Or f1 f2) = extractVars f1 ++ extractVars f2
+extractVars (Imp f1 f2) = extractVars f1 ++ extractVars f2
+extractVars (Eqv f1 f2) = extractVars f1 ++ extractVars f2
 
-findWorlds :: [World] -> Formula -> [World]
-findWorlds [] _ = []
-findWorlds (x:xs) f
-    | (sat x f) == True = [x] ++ findWorlds xs f
-    | otherwise = (findWorlds xs f)
+supDoublons :: [[Char]] -> [[Char]]
+supDoublons [] = []
+supDoublons (x:xs)   
+    | x `elem` xs = supDoublons xs
+    | otherwise = x : supDoublons xs
 
-{-
+findFromWorlds :: [World] -> Formula -> [World]
+findFromWorlds [] _ = []
+findFromWorlds (x:xs) f
+    | (sat x f) == True = [x] ++ findFromWorlds xs f
+    | otherwise = (findFromWorlds xs f)
+
+findWorlds :: Formula -> [World]
+findWorlds f = (findFromWorlds (genAllWorlds (supDoublons(extractVars f))) f)
+
 testFindWorlds :: [Bool] -- Fonction de test
 testFindWorlds = [
-    findWorlds (And (Var "p1") (Var "t2")),
-    findWorlds (door1) == [["p1","t2"]] ]-}
+    findWorlds (And (Var "p1") (Var "t2")) == [["p1","t2"]] ]
 
 
 {- Fonction qui reçoit les résultats d’un test et qui retourne vrai si tous les résultats du test sont vrai et faux sinon. -}
