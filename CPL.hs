@@ -37,8 +37,7 @@ instance Show Formula where
 {- Type World, pour représenter le type des mondes possibles. -}
 type World = [[Char]]
 
-
-{- Fonction qui, pour une liste de noms de variables propositionnels (tel que ["p1", "p2", "t1", "t2"]), 
+{- Question 3. Fonction qui, pour une liste de noms de variables propositionnels (tel que ["p1", "p2", "t1", "t2"]), 
 génère la liste de tous les mondes possibles pour ces variables. -}
 genAllWorlds :: [[Char]] -> [World]
 genAllWorlds [] = []
@@ -52,7 +51,7 @@ testGenWorlds = [
     ]
 
 
-{- Fonction qui, pour un monde possible w et une formule phi passés en arguments, vérifie si w satisfait phi. -}
+{- Question 4. Fonction qui, pour un monde possible w et une formule phi passés en arguments, vérifie si w satisfait phi. -}
 sat :: World -> Formula -> Bool
 sat _ T = True
 sat _ F = False
@@ -70,8 +69,8 @@ testSat = [
     sat ["p1", "p2"] (And (Var "p1") (Var "p2")) == True,
     sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
 
-{- Fonction qui qui, pour une formule phi renvoie la liste de tous mondes possibles qui satisfont phi. -}
-extractVars :: Formula -> [[Char]]
+{- Question 5. Fonction qui qui, pour une formule phi renvoie la liste de tous mondes possibles qui satisfont phi. -}
+extractVars :: Formula -> [[Char]] -- Extrait les variables d'une formule
 extractVars T = []
 extractVars F = []
 extractVars (Var v) = [v]
@@ -81,19 +80,19 @@ extractVars (Or f1 f2) = extractVars f1 ++ extractVars f2
 extractVars (Imp f1 f2) = extractVars f1 ++ extractVars f2
 extractVars (Eqv f1 f2) = extractVars f1 ++ extractVars f2
 
-supDoublons :: [[Char]] -> [[Char]]
+supDoublons :: [[Char]] -> [[Char]] -- Supprime les doublons d'une liste de variables.
 supDoublons [] = []
 supDoublons (x:xs)   
     | x `elem` xs = supDoublons xs
     | otherwise = x : supDoublons xs
 
-findFromWorlds :: [World] -> Formula -> [World]
+findFromWorlds :: [World] -> Formula -> [World] -- Trie l'ensemble des mondes possibles (en paramètre) selon la formule.
 findFromWorlds [] _ = []
 findFromWorlds (x:xs) f
     | (sat x f) == True = x : findFromWorlds xs f
     | otherwise = (findFromWorlds xs f)
 
-findWorlds :: Formula -> [World]
+findWorlds :: Formula -> [World] -- Fonction principale.
 findWorlds f = (findFromWorlds (genAllWorlds (supDoublons(extractVars f))) f)
 
 testFindWorlds :: [Bool] -- Fonction de test
