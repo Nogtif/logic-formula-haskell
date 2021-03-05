@@ -5,7 +5,14 @@
     by Quentin Carpentier & Paul-Joseph Krogulec.
 -----}
 
-module CPL where
+module CPL (
+    Formula (..),
+    World,
+    genAllWorlds, testGenWorlds,
+    sat, testSat,
+    findWorlds,
+    testAll
+) where
 
 {- Type structuré Formula pour représenter des formules booléennes (c.-à-d., des formules logiques).-}
 data Formula = T | F | Var [Char]
@@ -64,11 +71,6 @@ testSat = [
     sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
 
 {- Fonction qui qui, pour une formule phi renvoie la liste de tous mondes possibles qui satisfont phi. -}
-extractVars :: Formula -> [[Char]] -- Extrait les variables possibles à partir d'une formule.
-extractVars (Var s) = [s]
-extractVars (Not phi) = (extractVars phi)
-extractVars (And phi psi) = (extractVars phi) ++ (extractVars psi)
-
 findWorlds :: [World] -> Formula -> [World]
 findWorlds [] _ = []
 findWorlds (x:xs) f

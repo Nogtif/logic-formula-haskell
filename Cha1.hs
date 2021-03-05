@@ -5,6 +5,7 @@
     by Quentin Carpentier & Paul-Joseph Krogulec.
 -----}
 
+module Cha1 (challenge1) where
 import CPL
 
 door1 :: Formula
