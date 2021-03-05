@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -Wall #-}
-{----- 
+{--
     LCPF : Projet
     Une princesse ou un tigre ?
     by Quentin Carpentier & Paul-Joseph Krogulec.
------}
+-}
 
 module CPL (
     Formula (..),
@@ -71,7 +71,7 @@ testSat = [
     sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
 
 {- Fonction qui qui, pour une formule phi renvoie la liste de tous mondes possibles qui satisfont phi. -}
-extractVars :: Formula -> World
+extractVars :: Formula -> [[Char]]
 extractVars T = []
 extractVars F = []
 extractVars (Var v) = [v]
@@ -90,7 +90,7 @@ supDoublons (x:xs)
 findFromWorlds :: [World] -> Formula -> [World]
 findFromWorlds [] _ = []
 findFromWorlds (x:xs) f
-    | (sat x f) == True = [x] ++ findFromWorlds xs f
+    | (sat x f) == True = x : findFromWorlds xs f
     | otherwise = (findFromWorlds xs f)
 
 findWorlds :: Formula -> [World]
@@ -112,5 +112,5 @@ test(tab)
 si tous les résultats des tests de toutes les fonctions sont vrais, sinon "Fail!". -}
 testAll :: [Char]
 testAll 
-    | test(testGenWorlds) && test(testSat) = "Success"
+    | test(testGenWorlds) && test(testSat) && test(testFindWorlds) = "Success"
     | otherwise = "Fail!"
