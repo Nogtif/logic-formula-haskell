@@ -13,7 +13,7 @@ module CPL (
     findWorlds,
     testAll
 ) where
-
+ 
 {- Type structuré Formula pour représenter des formules booléennes (c.-à-d., des formules logiques).-}
 data Formula = T | F | Var [Char]
     | Not   (Formula)
