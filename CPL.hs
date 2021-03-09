@@ -40,8 +40,8 @@ type World = [[Char]]
 {- Question 3. Fonction qui, pour une liste de noms de variables propositionnels (tel que ["p1", "p2", "t1", "t2"]), 
 génère la liste de tous les mondes possibles pour ces variables. -}
 genAllWorlds :: [[Char]] -> [World]
-genAllWorlds [] = []
-genAllWorlds (x:xs) = [x] : map (x :) (genAllWorlds xs) ++ genAllWorlds xs
+genAllWorlds [] = [[]]
+genAllWorlds (x:xs) = [x:ps | ps <- (genAllWorlds xs)] ++ (genAllWorlds xs)
 
 testGenWorlds :: [Bool] -- Fonction de test
 testGenWorlds = [
@@ -98,7 +98,6 @@ findWorlds f = (findFromWorlds (genAllWorlds (supDoublons(extractVars f))) f)
 testFindWorlds :: [Bool] -- Fonction de test
 testFindWorlds = [
     findWorlds (And (Var "p1") (Var "t2")) == [["p1","t2"]] ]
-
 
 {- Fonction qui reçoit les résultats d’un test et qui retourne vrai si tous les résultats du test sont vrai et faux sinon. -}
 test :: [Bool] -> Bool
