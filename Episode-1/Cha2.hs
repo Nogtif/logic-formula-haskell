@@ -13,7 +13,8 @@ door1 :: Formula
 door1 = Or 
         (Var "p1") 
         (Or 
-            (Var "p2") (And (Var "p1") (Var "p2"))
+            (Var "p2") 
+            (And (Var "p1") (Var "p2"))
         )
 
 {- Porte 2 disant : "Il y a un tigre dans l'autre cellule." -}
