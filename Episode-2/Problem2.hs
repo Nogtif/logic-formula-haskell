@@ -5,7 +5,7 @@
     by Quentin Carpentier & Paul-Joseph Krogulec.
 -}
 
-module Problem1 where
+module Problem2 where
 import EL
 
 {- Fonction qui prend une proposition enargument 
@@ -30,11 +30,13 @@ indis _ _ = []
 
 {- Définition complète de l'état épistémique initial du problème. -}
 s0 :: EpiState
-s0 = (interp, indis, 01)
+s0 = (interp, indis, 11)
 
-{- Exprime l'annonce du père, c.-à-d., « Un parmi vous a le visage sale. » -}
+{- Exprime l'annonce du père, c.-à-d., « Au moins un des deux a le visage sale. » -}
 fatherAnn :: EpiFormula
-fatherAnn = Or (Var "as") (Var "bs")
+fatherAnn = Or 
+            (Or (Var "as") (Var "bs")) 
+            (And (Var "as") (Var "bs"))
 
 {- Exprime l'ignorance d'Alice sur son état, « Alice ne sait pas que le visage d'Alice est sale, 
 et Alice ne sait pas que le visage d'Alice n’est pas sale. » -}
@@ -51,11 +53,11 @@ bobIgn = And
         (Not (Knows "b" (Not (Var "bs"))))
 
 {- Exprime le problème 1 dans sa totalité. -}
-problem1 :: EpiFormula
-problem1 = And 
+problem2 :: EpiFormula
+problem2 = And 
             (And aliceIgn bobIgn) 
-            (After fatherAnn (And 
-                                (And aliceIgn (Not bobIgn))
-                                (After (Not bobIgn) (Not aliceIgn)) 
-                            ) 
+            (After fatherAnn (After 
+                                (And aliceIgn bobIgn)
+                                (And (Not aliceIgn) (Not bobIgn))
+                            )
             )
