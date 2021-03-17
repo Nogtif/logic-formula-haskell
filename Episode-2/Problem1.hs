@@ -19,7 +19,14 @@ interp _    = []
 et renvoie la liste de mondes possibles qui sont indiscernables du monde w pour l'agent i. -}
 indis :: Agent -> World -> [World]
 indis "a" 00 = [00 ,10]
+indis "a" 01 = [01, 11]
+indis "a" 10 = [10, 00]
+indis "a" 11 = [11, 01]
 indis "b" 00 = [00 ,01]
+indis "b" 01 = [01, 00]
+indis "b" 10 = [10, 11]
+indis "b" 11 = [11, 10]
+indis _ _ = []
 
 {- Définition complète de l'état épistémique initial du problème. -}
 s0 :: EpiState
@@ -32,13 +39,23 @@ fatherAnn = Or (Var "as") (Var "bs")
 {- Exprime l'ignorance d'Alice sur son état, « Alice ne sait pas que le visage d'Alice est sale, 
 et Alice ne sait pas que le visage d'Alice n’est pas sale. » -}
 aliceIgn :: EpiFormula
-aliceIgn = Not (And (Knows "a" (Var "as")) (Knows "a" (Not (Var "as"))))
+aliceIgn = And 
+            (Not(Knows "a" (Var "as"))) 
+            (Not (Knows "a" (Not (Var "as"))))
 
 {- Exprime l'ignorance de Bob sur son état, « Bob ne sait pas que le visage de Bob est sale, 
 et Bob ne sait pas que le visage de Bob n’est pas sale. » -}
 bobIgn :: EpiFormula
-bobIgn = Not (And (Knows "b" (Var "bs")) (Knows "b" (Not (Var "bs"))))
+bobIgn = And 
+        (Not (Knows "b" (Var "bs"))) 
+        (Not (Knows "b" (Not (Var "bs"))))
 
 {- Exprime le problème 1 dans sa totalité. -}
 problem1 :: EpiFormula
-problem1 = After (fatherAnn) (And (aliceIgn) (After (Knows "b" (Not (Var "bs"))) (And (Not aliceIgn) (Not bobIgn))))
+problem1 = And 
+            (And aliceIgn bobIgn) 
+            (After fatherAnn (And 
+                                (And aliceIgn (Not bobIgn))
+                                (After (Not bobIgn) (Not aliceIgn)) 
+                            ) 
+            )

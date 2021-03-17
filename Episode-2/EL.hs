@@ -12,6 +12,7 @@ module EL (
     EpiState,
     EpiFormula (..),
     epiSat, testEpiSat,
+    update, testUpdate,
     testAll
 ) where
 
@@ -39,8 +40,8 @@ data EpiFormula = T | F | Var [Char]
     | After (EpiFormula) (EpiFormula)
     deriving (Show, Eq)
 
-{- Fonction qui prend un état épistémiques et une formule phi en arguments,
-et renvoie True si a satisfait phi, et False sinon -}
+{- Fonction qui prend un état épistémique s et une formule phi en arguments,
+et renvoie True si s satisfait phi, et False sinon -}
 epiSat :: EpiState -> EpiFormula -> Bool
 epiSat _ T = True
 epiSat _ F = False
@@ -50,10 +51,22 @@ epiSat s (And phi psi) = (epiSat s phi) && (epiSat s psi)
 epiSat s (Or phi psi)  = (epiSat s phi) || (epiSat s psi)
 epiSat s (Imp phi psi) = (not (epiSat s phi)) || (epiSat s psi)
 epiSat s (Eqv phi psi) = (epiSat s (Imp phi psi)) && (epiSat s (Imp psi phi))
-epiSat (interp, indis, w) (Knows a phi) = (epiSat (interp, indis, w) phi) && null (indis a w)
+epiSat (interp, indis, w) (Knows a phi) = all (\x->(epiSat (interp, indis, x) phi)) (indis a w)
+epiSat (interp, indis, w) (After phi psi) = (epiSat (interp, indis, w) phi) && (epiSat(update(interp, indis, w) phi) psi)
 
-testEpiSat :: [Bool]
+testEpiSat :: [Bool] -- Fonction de test
 testEpiSat = [True]
+
+{- Fonction qui prend un état épistémique s et une formule phi ,
+et renvoie un nouvel état épistémique correspondant à lamise à jour de s par phi. -}
+update  ::  EpiState -> EpiFormula -> EpiState
+update (interp, indis, w) phi =
+    let interp2 p = filter (\x-> (epiSat (interp, indis, x) phi)) (interp p)
+        indis2 a w2 = filter(\x-> (epiSat (interp, indis, x) phi)) (indis a w2)
+    in (interp2, indis2, w)
+
+testUpdate :: [Bool] -- Fonction de test
+testUpdate = [True]
 
 {- Fonction qui reçoit les résultats d’un test et qui retourne vrai si tous les résultats du test sont vrai et faux sinon. -}
 test :: [Bool] -> Bool
@@ -66,5 +79,5 @@ test(tab)
 si tous les résultats des tests de toutes les fonctions sont vrais, sinon "Fail!". -}
 testAll :: [Char]
 testAll 
-    | test(testEpiSat) = "Success"
+    | test(testEpiSat) && test(testUpdate) = "Success"
     | otherwise = "Fail!"

@@ -20,13 +20,42 @@ door2 = (Var "p2")
 door3 :: Formula
 door3 = (Var "t2")
 
-{- Formule qui décrit le fait qu'il ne peut pas y avoir un tigre et une princesse (en même temps) dans chaque cellule. -}
+{- Formule qui décrit le fait qu'il ne peut pas y avoir un tigre et une princesse (en même temps) dans chaque cellule,
+et qu'une seule cellule renfermait une princesseet qu'il avait fait mettre un tigre dans chacune des deux autres. -}
 constraint :: Formula
-constraint = And (And (Eqv (Var "p1") (Not (Var "t1"))) (Imp (Var "p1") (And (Var "t2") (Var "t3")))) (And (And (Eqv (Var "p2") (Not (Var "t2"))) (Imp (Var "p2") (And (Var "t1") (Var "t3")))) (And (Eqv (Var "p3") (Not (Var "t3"))) (Imp (Var "p3") (And (Var "t1") (Var "t2")))))
+constraint = And 
+    (And 
+        (Eqv (Var "p1") (Not (Var "t1"))) 
+        (Imp (Var "p1") (And (Var "t2") (Var "t3")))
+    ) 
+    (And 
+        (And 
+            (Eqv (Var "p2") (Not (Var "t2"))) 
+            (Imp (Var "p2") (And (Var "t1") (Var "t3")))
+        ) 
+        (And 
+            (Eqv (Var "p3") (Not (Var "t3"))) 
+            (Imp (Var "p3") (And (Var "t1") (Var "t2")))
+        )
+    )
 
-{- Formule pour exprimer le fait que, dans les deux portes disent toutes les deux la vérité, ou mentent. -}
+{- Formule pour exprimer le fait que, qu'une seule des trois affiches était sincère. -}
 reglement :: Formula
-reglement = And (Imp (door1) (And (Not door2) (Not door3))) (And (Imp (door2) (And (Not door1) (Not door3))) (Imp (door3) (And (Not door1) (Not door2))))
+reglement = And 
+            (Imp 
+                (door1) 
+                (And (Not door2) (Not door3))
+            ) 
+            (And 
+                (Imp 
+                    (door2) 
+                    (And (Not door1) (Not door3))
+                ) 
+                (Imp 
+                    (door3) 
+                    (And (Not door1) (Not door2))
+                )
+            )
 
 {- Fonction qui fait la conjonction de toutes les formules de la sixième épreuve. -}
 challenge6 :: Formula
