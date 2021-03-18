@@ -11,28 +11,31 @@ import EL
 {- Fonction qui prend une proposition enargument 
 et renvoie la liste de mondes possibles où la proposition est vraie. -}
 interp :: Prop -> [World]
-interp "as" = [10, 11]
-interp "bs" = [01, 11]
-interp _    = []
+interp "as" = [10, 11]  -- Alice est sale dans les mondes 10 et 11.
+interp "bs" = [01, 11]  -- Bob est sale dans les mondes 01 et 11.
+interp _    = []        -- Toutes les autres propositions sont fausses.
 
 {- Fonction qui prend un agent i et un monde possible w en arguments,
 et renvoie la liste de mondes possibles qui sont indiscernables du monde w pour l'agent i. -}
 indis :: Agent -> World -> [World]
+-- Monde indiscernable d'Alice :
 indis "a" 00 = [00, 10]
 indis "a" 01 = [01, 11]
 indis "a" 10 = [10, 00]
 indis "a" 11 = [11, 01]
+-- Monde indiscernable de Bob :
 indis "b" 00 = [00, 01]
 indis "b" 01 = [01, 00]
 indis "b" 10 = [10, 11]
 indis "b" 11 = [11, 10]
+-- Autres...
 indis _ _ = []
 
 {- Définition complète de l'état épistémique initial du problème. -}
 s0 :: EpiState
 s0 = (interp, indis, 01)
 
-{- Exprime l'annonce du père, c.-à-d., « Un parmi vous a le visage sale. » -}
+{- Exprime l'annonce du père, c.-à-d., « Au moins un des deux a le visage sale. » -}
 fatherAnn :: EpiFormula
 fatherAnn = Or (Var "as") (Var "bs")
 
