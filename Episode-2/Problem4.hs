@@ -11,21 +11,27 @@ import EL
 {- Fonction qui prend une proposition en argument,
 et renvoie la liste de mondes possibles où la proposition est vraie. -}
 interp :: Prop -> [World]
-interp "an" = [10, 21, 32, 43]
-interp "bn" = [01, 12, 23, 34]
+interp "an" = [10, 12, 21, 23, 32, 34, 43]
+interp "bn" = [01, 21, 12, 32, 23, 43, 34]
 interp _    = []
 
 {- Fonction qui prend un agent i et un monde possible w en arguments,
 et renvoie la liste de mondes possibles qui sont indiscernables du monde w pour l'agent i. -}
 indis :: Agent -> World -> [World]
 indis "a" 10 = [10, 12]
+indis "a" 12 = [12, 10]
 indis "a" 21 = [21, 23]
+indis "a" 23 = [23, 21]
 indis "a" 32 = [32, 34]
+indis "a" 34 = [34, 32]
 indis "a" 43 = [43]
 
 indis "b" 01 = [01, 21]
+indis "b" 21 = [21, 01]
 indis "b" 12 = [12, 32]
+indis "b" 32 = [32, 12]
 indis "b" 23 = [23, 43]
+indis "b" 43 = [43, 23]
 indis "b" 34 = [34]
 indis _ _ = []
 
