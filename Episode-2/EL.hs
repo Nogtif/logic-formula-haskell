@@ -40,6 +40,22 @@ data EpiFormula = T | F | Var [Char]
     | After (EpiFormula) (EpiFormula)
     deriving (Show, Eq)
 
+testInterp :: Prop -> [World] -- Interp de test du problème 1
+testInterp "as" = [10, 11]
+testInterp "bs" = [01, 11]
+testInterp _    = []
+
+testIndis :: Agent -> World -> [World]  -- Indis de test du problème 1
+testIndis "a" 00 = [00, 10]
+testIndis "a" 01 = [01, 11]
+testIndis "a" 10 = [10, 00]
+testIndis "a" 11 = [11, 01]
+testIndis "b" 00 = [00, 01]
+testIndis "b" 01 = [01, 00]
+testIndis "b" 10 = [10, 11]
+testIndis "b" 11 = [11, 10]
+testIndis _ _ = []
+
 {- Fonction qui prend un état épistémique s et une formule phi en arguments,
 et renvoie True si s satisfait phi, et False sinon -}
 epiSat :: EpiState -> EpiFormula -> Bool
@@ -55,7 +71,11 @@ epiSat (interp, indis, w) (Knows a phi) = all (\x->(epiSat (interp, indis, x) ph
 epiSat (interp, indis, w) (After phi psi) = (epiSat (interp, indis, w) phi) && (epiSat(update(interp, indis, w) phi) psi)
 
 testEpiSat :: [Bool] -- Fonction de test
-testEpiSat = [True]
+testEpiSat = [
+        epiSat (testInterp, testIndis, 00) T == True,
+        epiSat (testInterp, testIndis, 10) F == False,
+        epiSat (testInterp, testIndis, 11) (After (Not (Knows "a" (Var "as"))) (Not (Knows "b" (Var "bs")))) == True
+    ]
 
 {- Fonction qui prend un état épistémique s et une formule phi ,
 et renvoie un nouvel état épistémique correspondant à lamise à jour de s par phi. -}
@@ -66,7 +86,9 @@ update (interp, indis, w) phi =
     in (interp2, indis2, w)
 
 testUpdate :: [Bool] -- Fonction de test
-testUpdate = [True]
+testUpdate = [
+        epiSat (update (testInterp, testIndis, 00) F) T == True
+    ]
 
 {- Fonction qui reçoit les résultats d’un test et qui retourne vrai si tous les résultats du test sont vrai et faux sinon. -}
 test :: [Bool] -> Bool
