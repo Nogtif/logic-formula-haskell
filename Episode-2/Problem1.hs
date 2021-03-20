@@ -42,23 +42,29 @@ fatherAnn = Or (Var "as") (Var "bs")
 {- Exprime l'ignorance d'Alice sur son état, « Alice ne sait pas que le visage d'Alice est sale, 
 et Alice ne sait pas que le visage d'Alice n’est pas sale. » -}
 aliceIgn :: EpiFormula
-aliceIgn = And 
-            (Not (Knows "a" (Var "as"))) 
-            (Not (Knows "a" (Not (Var "as"))))
+aliceIgn = (
+    And 
+        (Not (Knows "a" (Var "as"))) 
+        (Not (Knows "a" (Not (Var "as"))))
+    )
 
 {- Exprime l'ignorance de Bob sur son état, « Bob ne sait pas que le visage de Bob est sale, 
 et Bob ne sait pas que le visage de Bob n’est pas sale. » -}
 bobIgn :: EpiFormula
-bobIgn = And 
+bobIgn = (
+    And 
         (Not (Knows "b" (Var "bs"))) 
         (Not (Knows "b" (Not (Var "bs"))))
+    )
 
 {- Exprime le problème 1 dans sa totalité. -}
 problem1 :: EpiFormula
-problem1 = And 
-            (And aliceIgn bobIgn) 
-            (After fatherAnn (And 
-                                (And aliceIgn (Not bobIgn))
-                                (After (Not bobIgn) (Not aliceIgn)) 
-                            ) 
-            )
+problem1 = (
+    And 
+        (And aliceIgn bobIgn) 
+        (After fatherAnn (And 
+                            (And aliceIgn (Not bobIgn))
+                            (After (Not bobIgn) (Not aliceIgn)) 
+                        ) 
+        )
+    )

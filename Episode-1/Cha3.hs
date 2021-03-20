@@ -18,15 +18,19 @@ door2 = (Var "p1")
 
 {- Formule qui décrit le fait qu'il ne peut pas y avoir un tigre et une princesse (en même temps) dans chaque cellule. -}
 constraint :: Formula
-constraint = And 
-            (Eqv (Var "p1") (Not (Var "t1"))) 
-            (Eqv (Var "p2") (Not (Var "t2")))
+constraint = (
+    And 
+        (Eqv (Var "p1") (Not (Var "t1"))) 
+        (Eqv (Var "p2") (Not (Var "t2")))
+    )
 
 {- Formule pour exprimer le fait que : dans les deux portes disent toutes les deux la vérité, ou mentent. -}
 reglement :: Formula
-reglement = Or 
-            (And door1 door2) 
-            (And (Not door1) (Not door2))
+reglement = (
+    Or 
+        (And door1 door2) 
+        (And (Not door1) (Not door2))
+    )
 
 {- Fonction qui fait la conjonction de toutes les formules de la troisième épreuve. -}
 challenge3 :: Formula

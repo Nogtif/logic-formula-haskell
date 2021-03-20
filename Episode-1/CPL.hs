@@ -33,7 +33,6 @@ instance Show Formula where
     show (Imp f1 f2) = "(" ++ show f1 ++ " ⇒ " ++ show f2 ++ ")"
     show (Eqv f1 f2) = "(" ++ show f1 ++ " ⇔ " ++ show f2 ++ ")"
 
-
 {- Type World, pour représenter le type des mondes possibles. -}
 type World = [[Char]]
 
@@ -45,11 +44,9 @@ genAllWorlds (x:xs) = [x:ps | ps <- (genAllWorlds xs)] ++ (genAllWorlds xs)
 
 testGenWorlds :: [Bool] -- Fonction de test
 testGenWorlds = [
-    genAllWorlds ["p1", "p2", "t1", "t2"] == [
-        ["p1"], ["p1", "p2"], ["p1","p2","t1"], ["p1","p2","t1","t2"],["p1","p2","t2"],
-        ["p1","t1"],["p1","t1","t2"],["p1","t2"], ["p2"],["p2","t1"], ["p2","t1","t2"], ["p2","t2"], ["t1"], ["t1","t2"], ["t2"]] 
+        genAllWorlds ["p1"] == [["p1"],[]],
+        genAllWorlds ["p1", "t2"] == [["p1","t2"],["p1"],["t2"],[]] 
     ]
-
 
 {- Question 4. Fonction qui, pour un monde possible w et une formule phi passés en arguments, vérifie si w satisfait phi. -}
 sat :: World -> Formula -> Bool
@@ -64,10 +61,11 @@ sat w (Eqv phi psi) = (sat w (Imp phi psi)) && (sat w (Imp psi phi))
 
 testSat :: [Bool] -- Fonction de test
 testSat = [
-    sat ["p1", "t2"] T == True,
-    sat ["p1", "p2", "t2"] (And (Var "p1") (Var "p2")) == True,
-    sat ["p1", "p2"] (And (Var "p1") (Var "p2")) == True,
-    sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True ]
+        sat ["p1", "t2"] T == True,
+        sat ["p1", "p2", "t2"] (And (Var "p1") (Var "p2")) == True,
+        sat ["p1", "p2"] (And (Var "p1") (Var "p2")) == True,
+        sat ["p1", "t2"] (And (Eqv (Var "p1") (Not (Var "t1"))) (Eqv (Var "p2") (Not (Var "t2")))) == True
+    ]
 
 {- Question 5. Fonction qui qui, pour une formule phi renvoie la liste de tous mondes possibles qui satisfont phi. -}
 extractVars :: Formula -> [[Char]] -- Extrait les variables d'une formule
