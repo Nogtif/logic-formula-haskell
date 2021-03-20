@@ -40,11 +40,13 @@ data EpiFormula = T | F | Var [Char]
     | After (EpiFormula) (EpiFormula)
     deriving (Show, Eq)
 
+{- Fonction interp pour permettre les test des fonctions testEpiSat & testUpdate. -}
 testInterp :: Prop -> [World] -- Interp de test du problème 1
 testInterp "as" = [10, 11]
 testInterp "bs" = [01, 11]
 testInterp _    = []
 
+{- Fonction indis pour permettre les test des fonctions testEpiSat & testUpdate. -}
 testIndis :: Agent -> World -> [World]  -- Indis de test du problème 1
 testIndis "a" 00 = [00, 10]
 testIndis "a" 01 = [01, 11]
