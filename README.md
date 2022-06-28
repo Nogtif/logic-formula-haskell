@@ -1,0 +1,1 @@
+# Logic Formula in haskell
